@@ -1,16 +1,23 @@
 package org.ankur.hibernate.dto;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 
 import javax.persistence.AttributeOverride;
 import javax.persistence.AttributeOverrides;
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.Lob;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -41,16 +48,24 @@ public class UserDetail {
 	private String description;
 
 	@Embedded
-	@AttributeOverrides({
-		@AttributeOverride (name="street",column=@Column(name="HOME_STREET_NUMBER")),
-		@AttributeOverride (name="city",column=@Column(name="HOME_CITY_NAME")),
-		@AttributeOverride (name="state",column=@Column(name="HOME_STATE_NAME")),
-		@AttributeOverride (name="pincode",column=@Column(name="HOME_PIN_CODE"))		
-	})
+	@AttributeOverrides({ @AttributeOverride(name = "street", column = @Column(name = "HOME_STREET_NUMBER") ),
+			@AttributeOverride(name = "city", column = @Column(name = "HOME_CITY_NAME") ),
+			@AttributeOverride(name = "state", column = @Column(name = "HOME_STATE_NAME") ),
+			@AttributeOverride(name = "pincode", column = @Column(name = "HOME_PIN_CODE") ) })
 	private Address homeAddress;
 
 	@Embedded
 	private Address officeAddress;
+
+	@ElementCollection(fetch=FetchType.EAGER)
+	@JoinTable(name = "USER_ADDRESS", joinColumns = @JoinColumn(name = "USER_ID") )
+	/*@GenericGenerator(name = "hilo-gen", strategy = "hilo")
+	@CollectionId(columns = { @Column(name = "ADDRESS_ID") }, generator = "hilo-gen", type = @Type(type = "long") )*/
+	private Collection<Address> addList = new ArrayList<>();
+	
+	@OneToOne
+	//@Column(name="DEPT_ID")
+	private Department userDepartment;
 
 	@Transient
 	private String ignoredField;
@@ -119,11 +134,27 @@ public class UserDetail {
 		this.officeAddress = officeAaddress;
 	}
 
+	public Collection<Address> getAddList() {
+		return addList;
+	}
+
+	public void setAddList(Collection<Address> addList) {
+		this.addList = addList;
+	}
+
+	public Department getUserDepartment() {
+		return userDepartment;
+	}
+
+	public void setUserDepartment(Department userDepartment) {
+		this.userDepartment = userDepartment;
+	}
+
 	@Override
 	public String toString() {
 		return "UserDetail [userId=" + userId + ", userName=" + userName + ", joinedDate=" + joinedDate
-				+ ", joinedTime=" + joinedTime + ", description=" + description + ", homeAaddress=" + homeAddress
-				+ ", officeAaddress=" + officeAddress + ", ignoredField=" + ignoredField + "]";
+				+ ", joinedTime=" + joinedTime + ", description=" + description + ", homeAddress=" + homeAddress
+				+ ", officeAddress=" + officeAddress + "]";
 	}
 
 }

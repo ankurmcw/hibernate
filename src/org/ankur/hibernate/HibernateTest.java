@@ -3,6 +3,7 @@ package org.ankur.hibernate;
 import java.util.Date;
 
 import org.ankur.hibernate.dto.Address;
+import org.ankur.hibernate.dto.Department;
 import org.ankur.hibernate.dto.UserDetail;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -12,6 +13,9 @@ public class HibernateTest {
 
 	public static void main(String[] args) {
 		
+		Department dept = new Department();
+		dept.setDeptName("IT Department");
+				
 		Address homeAddr = new Address();
 		homeAddr.setCity("Home City name");
 		homeAddr.setPincode("Home Pincode number");
@@ -30,9 +34,12 @@ public class HibernateTest {
 		user1.setDescription("Description of first user goes here");
 		user1.setIgnoredField("Field is ignored");
 		user1.setJoinedDate(new Date());
-		user1.setJoinedTime(new Date());						
+		user1.setJoinedTime(new Date());		
 		user1.setHomeAddress(homeAddr);
 		user1.setOfficeAddress(offcAddr);
+		user1.getAddList().add(homeAddr);
+		user1.setUserDepartment(dept);
+		
 		
 		SessionFactory sessionFactory = null;
 		Session session = null;
@@ -41,6 +48,7 @@ public class HibernateTest {
 			session = sessionFactory.openSession();
 			session.beginTransaction();
 			session.save(user1);
+			session.save(dept);
 			session.getTransaction().commit();			
 		} catch (Exception e) {
 			session.getTransaction().rollback();
@@ -48,17 +56,20 @@ public class HibernateTest {
 			session.close();
 		}
 		
+		user1 = null;
 		try {
 			session = sessionFactory.openSession();
 			user1 = session.get(UserDetail.class, 1);
 			if(user1 != null) {
 				System.out.println(user1);
+				session.close();
+				System.out.println(user1.getAddList().size());
 			}
 			
 		} catch(Exception e) {
 			session.getTransaction().rollback();
 		}finally {
-			session.close();
+			//session.close();
 		}
 
 		/*//Configuration for Hibernate 5

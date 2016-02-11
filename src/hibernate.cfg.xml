@@ -45,6 +45,7 @@
         <mapping resource="hibernate-config/domain/HolidayCalendar.hbm.xml"/> -->
 
         <mapping class="org.ankur.hibernate.dto.UserDetail"/> 
+        <mapping class="org.ankur.hibernate.dto.Department"/> 
 
     </session-factory>
 
