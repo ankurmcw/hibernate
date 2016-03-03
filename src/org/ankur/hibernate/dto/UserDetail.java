@@ -6,6 +6,7 @@ import java.util.Date;
 
 import javax.persistence.AttributeOverride;
 import javax.persistence.AttributeOverrides;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.Embedded;
@@ -17,6 +18,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.Lob;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -57,15 +59,27 @@ public class UserDetail {
 	@Embedded
 	private Address officeAddress;
 
-	@ElementCollection(fetch=FetchType.EAGER)
+	@ElementCollection(fetch = FetchType.EAGER)
 	@JoinTable(name = "USER_ADDRESS", joinColumns = @JoinColumn(name = "USER_ID") )
-	/*@GenericGenerator(name = "hilo-gen", strategy = "hilo")
-	@CollectionId(columns = { @Column(name = "ADDRESS_ID") }, generator = "hilo-gen", type = @Type(type = "long") )*/
+	/*
+	 * @GenericGenerator(name = "hilo-gen", strategy = "hilo")
+	 * 
+	 * @CollectionId(columns = { @Column(name = "ADDRESS_ID") }, generator =
+	 * "hilo-gen", type = @Type(type = "long") )
+	 */
 	private Collection<Address> addList = new ArrayList<>();
-	
+
 	@OneToOne
-	//@Column(name="DEPT_ID")
+	@JoinColumn(name = "USER_DEPT_ID")
 	private Department userDepartment;
+
+	@OneToMany(cascade=CascadeType.ALL)//(mappedBy = "user")
+	@JoinTable(name = "USER_VEHICLE", joinColumns = @JoinColumn(name = "USER_ID") , inverseJoinColumns = @JoinColumn(name = "DEPT_ID") )
+	private Collection<Vehicle> vehiceList = new ArrayList<>();
+
+	/*@ManyToMany
+	@JoinTable(name = "USER_BOOK", joinColumns = @JoinColumn(name = "USER_ID") , inverseJoinColumns = @JoinColumn(name = "BOOk_ID") )
+	private Collection<RentalBook> bookList = new ArrayList<>();*/
 
 	@Transient
 	private String ignoredField;
@@ -149,6 +163,22 @@ public class UserDetail {
 	public void setUserDepartment(Department userDepartment) {
 		this.userDepartment = userDepartment;
 	}
+
+	public Collection<Vehicle> getVehiceList() {
+		return vehiceList;
+	}
+
+	public void setVehiceList(Collection<Vehicle> vehiceList) {
+		this.vehiceList = vehiceList;
+	}
+
+	/*public Collection<RentalBook> getBookList() {
+		return bookList;
+	}
+
+	public void setBookList(Collection<RentalBook> bookList) {
+		this.bookList = bookList;
+	}*/
 
 	@Override
 	public String toString() {
