@@ -36,7 +36,7 @@
         <!-- Echo all executed SQL to stdout -->
         <property name="show_sql">true</property>
         
-        <property name="hbm2ddl.auto">create</property>
+        <property name="hbm2ddl.auto">update</property>
 
         <!-- <mapping resource="hibernate-config/domain/Event.hbm.xml"/>
         <mapping resource="hibernate-config/domain/Person.hbm.xml"/>
@@ -45,7 +45,9 @@
         <mapping resource="hibernate-config/domain/HolidayCalendar.hbm.xml"/> -->
 
         <mapping class="org.ankur.hibernate.dto.UserDetail"/> 
-        <mapping class="org.ankur.hibernate.dto.Department"/> 
+        <mapping class="org.ankur.hibernate.dto.Department"/>
+        <mapping class="org.ankur.hibernate.dto.Vehicle"/>
+        <!-- <mapping class="org.ankur.hibernate.dto.RentalBook"/> --> 
 
     </session-factory>
 

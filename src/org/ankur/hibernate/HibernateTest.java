@@ -5,6 +5,7 @@ import java.util.Date;
 import org.ankur.hibernate.dto.Address;
 import org.ankur.hibernate.dto.Department;
 import org.ankur.hibernate.dto.UserDetail;
+import org.ankur.hibernate.dto.Vehicle;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
@@ -40,6 +41,28 @@ public class HibernateTest {
 		user1.getAddList().add(homeAddr);
 		user1.setUserDepartment(dept);
 		
+		Vehicle vehicle1 = new Vehicle();
+		vehicle1.setVehicleName("Car");
+		vehicle1.setUser(user1);
+		
+		Vehicle vehicle2 = new Vehicle();
+		vehicle2.setVehicleName("Jeep");
+		vehicle2.setUser(user1);
+		
+		user1.getVehiceList().add(vehicle1);
+		user1.getVehiceList().add(vehicle2);
+		
+		/*RentalBook book1 = new RentalBook();
+		book1.setBookName("Harry Potter");
+		
+		RentalBook book2 = new RentalBook();
+		book2.setBookName("Harry Potter");*/
+		
+		/*user1.getBookList().add(book1);
+		user1.getBookList().add(book2);
+		
+		book1.getUserList().add(user1);
+		book2.getUserList().add(user1);*/
 		
 		SessionFactory sessionFactory = null;
 		Session session = null;
@@ -47,13 +70,20 @@ public class HibernateTest {
 			sessionFactory = new Configuration().configure().buildSessionFactory();
 			session = sessionFactory.openSession();
 			session.beginTransaction();
-			session.save(user1);
+			session.persist(user1);
+			//session.save(user1);
 			session.save(dept);
+			session.delete(user1);
+			//session.save(vehicle1);
+			//session.save(vehicle2);
+			/*session.save(book1);
+			session.save(book2);*/
 			session.getTransaction().commit();			
 		} catch (Exception e) {
 			session.getTransaction().rollback();
 		} finally {
 			session.close();
+			sessionFactory.close();
 		}
 		
 		user1 = null;
@@ -61,15 +91,17 @@ public class HibernateTest {
 			session = sessionFactory.openSession();
 			user1 = session.get(UserDetail.class, 1);
 			if(user1 != null) {
-				System.out.println(user1);
+				System.out.println(user1.getVehiceList());
 				session.close();
 				System.out.println(user1.getAddList().size());
 			}
 			
 		} catch(Exception e) {
 			session.getTransaction().rollback();
+			System.out.println(e.getStackTrace());
 		}finally {
 			//session.close();
+			sessionFactory.close();
 		}
 
 		/*//Configuration for Hibernate 5
